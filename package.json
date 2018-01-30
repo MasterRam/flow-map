@@ -1,5 +1,5 @@
 {
-  "name": "canvas-flowchart",
+  "name": "flow-map",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -9,6 +9,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masterram/flow-map.git"
   },
   "private": true,
   "dependencies": {
