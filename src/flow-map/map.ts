@@ -21,11 +21,13 @@ export class FlowMap {
     this.context = this.canvas.getContext("2d");
     this.drawObject("circle", { width: 30, height: 30 });
     this.drawObject("rectangle", { width: 150, height: 100 });
-
+    this.drawObject("rectangle", { width: 150, height: 100 });
     this.drawObject("rounded", { width: 150, height: 100 });
     this.drawObject("multi", { width: 50, height: 50 });
-
+    this.drawObject("multi", { width: 50, height: 50 });
+    this.drawObject("multi", { width: 50, height: 50 });
     this.drawObject("circle", { width: 30, height: 30 });
+
     this.context.stroke();
   }
 
@@ -58,6 +60,7 @@ export class FlowMap {
     let origin = this.getPoints(forType, options);
 
     let top = this.top;
+    let bottom = top+this.objectInterval;
     switch (forType) {
       case "rectangle":
         {
@@ -105,7 +108,8 @@ export class FlowMap {
       default:
         break;
     }
-    this.drawArrow(this.canvas.width / 2,top, this.canvas.width / 2, this.top);
+    if(top!=0)
+    this.drawArrow(this.canvas.width / 2,top, this.canvas.width / 2, bottom);
     this.context.strokeStyle = "#cc0000";
     this.context.fillStyle = "#cc0000";
     this.context.fill();

@@ -1,4 +1,4 @@
-interface CanvasRenderingContext2D {
+/*interface CanvasRenderingContext2D {
   roundedRect(x, y, width, height, radius, fill, stroke);
 }
 "use strict";
@@ -1372,3 +1372,4 @@ const cancelEvent = (e: any) => {
   e.returnValue = false;
   return false;
 };
+*/

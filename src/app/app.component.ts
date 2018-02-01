@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { FlowMap } from '../flow-map/map';
+import { FlowHTMLMap } from '../flow-map/html-map';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,7 @@ import { FlowMap } from '../flow-map/map';
 export class AppComponent implements AfterViewInit{
   ngAfterViewInit(): void {
     setTimeout(() => {
-      let map=new FlowMap('flow-map');
+      let map=new FlowHTMLMap('flow-map');
       map.draw({});
     }, 0);
   }
