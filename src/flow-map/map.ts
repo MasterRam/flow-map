@@ -29,6 +29,10 @@ export class FlowMap {
     this.drawObject("circle", { width: 30, height: 30 });
 
     this.context.stroke();
+    //let ss=document.createElement('script');
+    //ss.innerHTML=""
+
+    //document.appendChild()
   }
 
   getPoints(forType: string, options: any): any {
