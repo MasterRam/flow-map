@@ -5,7 +5,8 @@ export class FlowHTMLMap {
   constructor(private id: string) {}
   element: HTMLElement;
   top: number = 0;
-  objectInterval: number = 10;
+  left: number = 0;
+  objectInterval: number = 5;
   private _createBase(): boolean {
     this.element = document.getElementById(this.id) as HTMLElement;
 
@@ -23,15 +24,15 @@ export class FlowHTMLMap {
   draw(data): void {
     if (!this._createBase()) return;
 
-    this.drawObject("circle", { width: 30, height: 30 });
-    this.drawObject("rectangle", { width: 150, height: 100 });
-    this.drawObject("rectangle", { width: 150, height: 100 });
-    this.drawObject("rounded", { width: 150, height: 100 });
+    this.drawObject("circle", { name:"start",width: 30, height: 30 });
+    this.drawObject("rectangle", { name:"process1",width: 150, height: 100 });
+    this.drawObject("rectangle", { name:"process2",width: 150, height: 100 });
+    this.drawObject("rounded", { name:"process3",width: 150, height: 100 });
     // this.drawObject("multi", { width: 50, height: 50 });
     // this.drawObject("multi", { width: 50, height: 50 });
     // this.drawObject("multi", { width: 50, height: 50 });
-    this.drawObject("circle", { width: 30, height: 30 });
-
+    this.drawObject("circle", { name:"end",width: 30, height: 30 });
+    
     $(document).ready(function() {
       // reset svg each time
       $("#svg1").attr("height", "0");
@@ -45,6 +46,7 @@ export class FlowHTMLMap {
       $("#svg1").attr("width", "0");
       connectAll();
     });
+    
   }
 
   getPoints(forType: string, options: any): any {
@@ -53,17 +55,17 @@ export class FlowHTMLMap {
     switch (forType) {
       case "rectangle":
         x = center - options.width / 2;
-        return { x: x, y: this.top + this.objectInterval };
+        return { x:  this.left + this.objectInterval, y: this.top + this.objectInterval/2 };
       case "rounded":
         x = center - options.width / 2;
-        return { x: x, y: this.top + this.objectInterval };
+        return { x: this.left + this.objectInterval, y: this.top + this.objectInterval/2 };
       case "circle":
         x = center - options.width / 2;
-        return { x: x, y: this.top + this.objectInterval };
+        return { x: this.left + this.objectInterval, y: this.top + this.objectInterval/2 };
       case "multi":
         return {
           x: center,
-          y: this.top + options.height + this.objectInterval
+          y: this.top + options.height + this.objectInterval/2
         };
       default:
         return { x: 0, y: 0 };
@@ -79,7 +81,7 @@ export class FlowHTMLMap {
       case "rectangle":
         {
           this.element.drawRectangle(
-            this.element,
+            this.element,options.name,
             origin.x,
             origin.y,
             options.height,
@@ -87,30 +89,33 @@ export class FlowHTMLMap {
           );
         }
         this.top = this.top + options.height + this.objectInterval;
+        this.left = this.left + options.width + this.objectInterval;
         break;
       case "circle":
         {
           this.element.drawCircle(
-            this.element,
+            this.element,options.name,
             origin.x,
             origin.y,
             options.height,
             options.width
-          );
+          )
         }
-        this.top = this.top + options.height * 2 + this.objectInterval;
+        this.top = this.top + options.height  + this.objectInterval;
+        this.left = this.left + options.width  + this.objectInterval;
         break;
       case "multi":
         // {
         //   this.context.moveTo(origin.x + options.width, origin.y);
         //   this.regularpolygon(origin.x, origin.y, options.width, 4);
         // }
-        this.top = this.top + options.height * 2 + this.objectInterval;
+        this.top = this.top + options.height  + this.objectInterval;
+        this.left = this.left + options.width  + this.objectInterval;
         break;
       case "rounded":
         {
           this.element.drawRoundedRectangle(
-            this.element,
+            this.element,options.name,
             origin.x,
             origin.y,
             options.height,
@@ -118,6 +123,7 @@ export class FlowHTMLMap {
           );
         }
         this.top = this.top + options.height + this.objectInterval;
+        this.left = this.left + options.width + this.objectInterval;
         break;
       default:
         break;
@@ -133,21 +139,21 @@ export class FlowHTMLMap {
 declare global {
   interface HTMLElement {
     drawRectangle(
-      s: HTMLElement,
+      s: HTMLElement,name:string,
       x: number,
       y: number,
       height: number,
       width: number
     ): HTMLElement;
     drawCircle(
-      s: HTMLElement,
+      s: HTMLElement,name:string,
       x: number,
       y: number,
       height: number,
       width: number
     ): HTMLElement;
     drawRoundedRectangle(
-      s: HTMLElement,
+      s: HTMLElement,name:string,
       x: number,
       y: number,
       height: number,
@@ -157,14 +163,14 @@ declare global {
 }
 
 HTMLElement.prototype.drawCircle = (
-  s: HTMLElement,
+  s: HTMLElement,name:string,
   x: number,
   y: number,
   height: number,
   width: number
 ) => {
   let div = document.createElement("div");
-  div.setAttribute('id',"drawCircle");
+  div.setAttribute('id',name);
   div.style.width = width + "px";
   div.style.height = height + "px";
   div.style.position = "relative";
@@ -177,13 +183,14 @@ HTMLElement.prototype.drawCircle = (
 };
 
 HTMLElement.prototype.drawRectangle = (
-  s: HTMLElement,
+  s: HTMLElement,name:string,
   x: number,
   y: number,
   height: number,
   width: number
 ) => {
   let div = document.createElement("div");
+  div.setAttribute('id',name);
   div.style.width = width + "px";
   div.style.height = height + "px";
   div.style.position = "relative";
@@ -195,13 +202,14 @@ HTMLElement.prototype.drawRectangle = (
 };
 
 HTMLElement.prototype.drawRoundedRectangle = (
-  s: HTMLElement,
+  s: HTMLElement,name:string,
   x: number,
   y: number,
   height: number,
   width: number
 ) => {
   let div = document.createElement("div");
+  div.setAttribute('id',name);
   div.style.width = width + "px";
   div.style.height = height + "px";
   div.style.position = "relative";
@@ -308,16 +316,107 @@ export function connectElements(svg, path, startElem, endElem) {
 
   // call function for drawing the path
   drawPath(svg, path, startX, startY, endX, endY);
+
 }
 
 function connectAll() {
   // connect all the paths you want!
-  connectElements($("#svg1"), $("#path1"), $("#teal"), $("#orange"));
-  connectElements($("#svg1"), $("#path2"), $("#red"), $("#orange"));
-  connectElements($("#svg1"), $("#path3"), $("#teal"), $("#aqua"));
-  connectElements($("#svg1"), $("#path4"), $("#red"), $("#aqua"));
-  connectElements($("#svg1"), $("#path5"), $("#purple"), $("#teal"));
-  connectElements($("#svg1"), $("#path6"), $("#orange"), $("#green"));
-  connectElements($("#svg1"), $("#path8"), $("#drawCircle"), $("#orange"));
+  connectElements($("#svg1"), $("#path1"), $("#start"), $("#process1"));
+  connectElements($("#svg1"), $("#path2"), $("#process1"), $("#process2"));
+  connectElements($("#svg1"), $("#path3"), $("#process2"), $("#process3"));
+  connectElements($("#svg1"), $("#path4"), $("#process3"), $("#end"));
+  connectElements($("#svg1"), $("#path5"), $("#process2"), $("#end"));
+
+  // connectDivs("start","process1",'blue',1);
+  // connectDivs("process1","process2",'blue',1);
+  // connectDivs("process2","process3",'blue',1);
+  // connectDivs("process3","end",'blue',1);
+  // connectDivs("process2","end",'blue',1);
   
+}
+
+
+
+//#######################################
+function connectDivs(leftId, rightId, color, tension) {
+  var left = document.getElementById(leftId);
+  var right = document.getElementById(rightId);
+     
+  var leftPos = findAbsolutePosition(left);
+  var x1 = leftPos.x;
+  var y1 = leftPos.y;
+  x1 += left.offsetWidth;
+  y1 += (left.offsetHeight / 2);
+ 
+  var rightPos = findAbsolutePosition(right);
+  var x2 = rightPos.x;
+  var y2 = rightPos.y;
+  y2 += (right.offsetHeight / 2);
+ 
+  var width=x2-x1;
+  var height = y2-y1;
+ 
+  drawCircle(x1, y1, 3, color);
+  drawCircle(x2, y2, 3, color);
+  drawCurvedLine(x1, y1, x2, y2, color, tension);
+}
+function findAbsolutePosition(htmlElement) {
+  var x = htmlElement.offsetLeft;
+  var y = htmlElement.offsetTop;
+  for (var el=htmlElement; 
+      
+       el != null; 
+       el = el.offsetParent) {
+         x += el.offsetLeft;
+         y += el.offsetTop;
+  }
+  return {
+      "x": x,
+      "y": y
+  };
+}
+
+function drawCircle(x, y, radius, color) {
+  var svg = createSVG();
+      var shape = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  shape.setAttributeNS(null, "cx", x);
+  shape.setAttributeNS(null, "cy", y);
+  shape.setAttributeNS(null, "r",  radius);
+  shape.setAttributeNS(null, "fill", color);
+  svg.appendChild(shape);
+}
+function createSVG() {
+  var svg:HTMLElement = document.getElementById("svg1") as any;
+  if (null == svg) {
+    svg = document.createElementNS("http://www.w3.org/2000/svg", 
+                                   "svg") as any;
+    svg.setAttribute('id', 'svg-canvas');
+    svg.setAttribute('style', 'position:absolute;top:0px;left:0px');
+    svg.setAttribute('width', document.body.clientWidth+'');
+    svg.setAttribute('height', document.body.clientHeight+'');
+    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", 
+                       "xmlns:xlink", 
+                       "http://www.w3.org/1999/xlink");
+    document.body.appendChild(svg);
+  }
+  return svg;
+}
+
+function drawCurvedLine(x1, y1, x2, y2, color, tension) {
+  var svg = createSVG();
+  var shape = document.createElementNS("http://www.w3.org/2000/svg", 
+                                       "path");
+  var delta = (x2-x1)*tension;
+  var hx1=x1+delta;
+  var hy1=y1;
+  var hx2=x2-delta;
+  var hy2=y2;
+  var path = "M "  + x1 + " " + y1 + 
+             " C " + hx1 + " " + hy1 
+                   + " "  + hx2 + " " + hy2 
+             + " " + x2 + " " + y2;
+  shape.setAttributeNS(null, "d", path);
+  shape.setAttributeNS(null, "fill", "none");
+  shape.setAttributeNS(null, "stroke", color);
+  svg.appendChild(shape);
 }
